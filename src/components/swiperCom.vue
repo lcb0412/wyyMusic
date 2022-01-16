@@ -72,6 +72,11 @@ export default {
     let res=await getBanners(1)
     this.imgs=[]
     this.imgs=res.data.banners
+    //将图片url转换为https
+    for(let i =0;i<this.imgs.length;i++){
+      this.imgs[i].pic=this.imgs[i].pic.replace("http","https")
+      // console.log(this.imgs[i].pic)
+    }
     console.log(this.imgs)
   },
 };
