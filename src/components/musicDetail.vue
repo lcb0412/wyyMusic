@@ -115,8 +115,8 @@ export default {
               lrc.timeList.push(time);
             }
           }
-          console.log(lrc.timeList);
-          console.log("lrc", lrc.val);
+          // console.log(lrc.timeList);
+          // console.log("lrc", lrc.val);
         });
       },
       {
@@ -214,7 +214,7 @@ export default {
   },
   computed: {
     windowHei() {
-      console.log('hei',document.documentElement.clientHeight || window.innerHeight)
+      // console.log('hei',document.documentElement.clientHeight || window.innerHeight)
       return document.documentElement.clientHeight || window.innerHeight;
     },
   },

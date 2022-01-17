@@ -62,11 +62,18 @@ export default {
       isplay: musicplay.isplaying,
     });
     let flag = ref(true);
-    async function getMusicUrl() {
+     function getMusicUrl() {
       // console.log(musicplay.val.id);
-      await getMusic(musicplay.val.id).then((res) => {
+      getMusic(musicplay.val.id).then((res) => {
         // console.log(res.data)
-        mid.url = res.data.data[0].url;
+        //部分情况下获取的音乐url为空
+        if(!res.data.data[0].url){
+          mid.url =  `https://music.163.com/song/media/outer/url?id=${musicplay.val.id}.mp3`
+        }
+        else{
+          mid.url = res.data.data[0].url;
+        }
+        console.log(res.data.data[0].url)
       });
       console.log("第" + musicplay.val.index + "首");
     }
