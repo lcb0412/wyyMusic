@@ -46,9 +46,9 @@
       </div>
     </div>
 
-    <a class="totopbotton" href="#" @click="location.href='#pltop'">
+    <!-- <a class="totopbotton" href="#" @click="location.href='#pltop'">
       Top
-    </a>
+    </a> -->
   </div>
 </template>
 
