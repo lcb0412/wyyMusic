@@ -73,7 +73,7 @@ export default {
         else{
           mid.url = res.data.data[0].url;
         }
-        console.log(res.data.data[0].url)
+        console.log(mid.url)
       });
       console.log("第" + musicplay.val.index + "首");
     }

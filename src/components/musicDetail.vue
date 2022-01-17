@@ -354,7 +354,7 @@ export default {
   position: absolute;
   top: 8rem;
   color: white;
-  height: 3rem;
+  height: 3.5rem;
   overflow: hidden;
   text-align: center;
   line-height: 0.6rem;
