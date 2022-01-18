@@ -3,7 +3,7 @@ module.exports =  {
     pages:{
         index:{
             entry:"src/main.js",
-            title:"仿网易云"
+            title:"Amusic"
         }
     }
 }

@@ -1,6 +1,8 @@
 <template>
-    <searchTop></searchTop>
-    <playList></playList>
+    <div id="Seachview">
+        <searchTop></searchTop>
+        <playList></playList>
+    </div>    
 </template>
 
 <script>

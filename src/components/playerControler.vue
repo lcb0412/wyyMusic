@@ -1,5 +1,5 @@
 <template>
-  <div class="player">
+  <div class="player" >
     <div class="player_left" @click="mid.url?openMusicDet():''">
       <img
         :src="musicplay.val.imgurl"
@@ -194,6 +194,18 @@ export default {
     },
     openMusicDet() {
       this.selectMusicDet.flag = true;
+      if( this.selectMusicDet.flag){
+        if(document.getElementById("tolistdetail")){
+          document.getElementById("tolistdetail").style.height=0;
+          document.getElementById("tolistdetail").style.overflow='hidden';
+        } 
+        if(document.getElementById("plist")){
+          document.getElementById("plist").style.height=0;
+          document.getElementById("plist").style.overflow='hidden';
+        }
+         
+      }
+      
     },
   },
 };

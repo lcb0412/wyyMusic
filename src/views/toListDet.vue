@@ -1,5 +1,5 @@
 <template>
-  <div class="tolistdet">
+  <div class="tolistdet" id="tolistdetail">
     <listViewTop :msg="msg"></listViewTop>
     <playList :msg="msg"></playList>
   </div>
@@ -47,7 +47,6 @@ export default {
 <style lang="less" scoped>
 * {
     margin: 0 auto;
-
 }
 
 

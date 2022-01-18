@@ -132,6 +132,14 @@ export default {
   methods: {
     returnList() {
       this.selectMusicDet.flag = false;
+      if(!this.selectMusicDet.flag){
+        if(document.getElementById("tolistdetail")){
+          document.getElementById("tolistdetail").style.height='100%';
+        }
+        if(document.getElementById("plist")){
+          document.getElementById("plist").style.height='100%';
+        }
+      }
     },
     clickMusic() {
       this.musicplay.val.isplaying = !this.musicplay.val.isplaying;
@@ -225,8 +233,8 @@ export default {
 .musicDet {
   width: 7.5rem;
   margin: 0 auto;
-  height: 100%;
-  position: fixed;
+  height: 150%;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
@@ -247,9 +255,9 @@ export default {
   }
 }
 .return {
-  position: absolute;
+  position: fixed;
   top: 0;
-  left: 0;
+  // left: 0;
   z-index: 2;
   color: white;
   font-size: 0.3rem;
@@ -360,6 +368,7 @@ export default {
   line-height: 0.6rem;
   overflow-y: scroll;
   width: 7.5rem;
+  overflow: hidden;
 }
 
 #picblock3 {
@@ -377,7 +386,7 @@ export default {
   justify-content: space-around;
   position: fixed;
   bottom: 0;
-  left: 0;
+  // left: 0;
   width: 7.5rem;
   margin: 0.3rem auto;
   .icon {

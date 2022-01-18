@@ -1,5 +1,5 @@
 <template>
-  <div class="swiper-container">
+  <div class="swiper-container" v-if="imgs.length">
     <div class="swiper-wrapper">
       <div class="swiper-slide" v-for="(item, index) in imgs" :key="index">
         <img :src="item.pic" alt="" srcset=""  />
@@ -33,7 +33,7 @@ export default {
     return {
       imgs: [
         {
-          pic: require("../assets/img/swiper4.png")
+          pic: ''
         }
       ],
     };
@@ -44,7 +44,7 @@ export default {
     var mySwiper = new Swiper(".swiper-container", {
       //direction: 'vertical', // 垂直切换选项
       loop: true, // 循环模式选项
-
+      observer:true,
       // 如果需要分页器
       pagination: {
         el: ".swiper-pagination",

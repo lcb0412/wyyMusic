@@ -6,6 +6,9 @@
         <div class="searchright">
             <input type="text" name="" id="" :placeholder="placeholder" v-model="searchKey" @keydown.enter="sendSeach()">
         </div>
+        <div class="setsearch" @click="sendSeach()">
+            搜索
+        </div>
     </div>
     <div class="history">
         <div class="historytitle">
@@ -66,6 +69,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+    *{
+        margin: 0 auto;
+    }
     .searchtop{
         width: 7.5rem;
         display: flex;
@@ -78,7 +84,7 @@ export default {
         .searchright{
             padding-left: 0.3rem;
             input{
-                width: 6rem;
+                width: 5rem;
                 border: none;
                 outline: none;
                 font-size: 0.25rem; 
@@ -86,6 +92,10 @@ export default {
                 border-bottom: 1px solid gray;
             }
            
+        }
+        .setsearch{
+            font-size: 0.25rem;
+            height: 0.25rem
         }
     }
     .history{

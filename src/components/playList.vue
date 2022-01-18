@@ -1,6 +1,6 @@
 <template>
-  <div class="playlist">
-    <div class="playlist_nav" id="#pltop">
+  <div class="playlist" id="plist">
+    <div class="playlist_nav" id="pltop">
       <div class="nav_left">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-a-jiushengquanjiuyuanbangzhuzhichifuwu"></use>
