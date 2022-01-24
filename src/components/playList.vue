@@ -3,22 +3,22 @@
     <div class="playlist_nav" id="pltop">
       <div class="nav_left">
         <svg class="icon" aria-hidden="true">
-          <use xlink:href="#icon-a-jiushengquanjiuyuanbangzhuzhichifuwu"></use>
+          <use xlink:href="#icon-yinle"></use>
         </svg>
         <div class="tips">
           播放全部
           <span>（共{{moreList?.List.length }}首）</span>
         </div>
       </div>
-      <div class="nav_right">+ 收藏 （
-        {{ msg?.detail.subscribedCount?changecount(msg.detail.subscribedCount):0 }}
+      <div class="nav_right" v-if="msg?.detail.subscribedCount">+ 收藏 （
+        {{ msg?.detail.subscribedCount?formatNum(msg.detail.subscribedCount):0 }}
         ）</div>
     </div>
     <div class="playlist_content">
       <div
         class="list_block"
         v-for="(item, index) in moreList?.List"
-        @click="changeMusic(index)"
+        @click="useChangeMusic(index,musicplay)"
       >
         <div class="listblock_left">
           <div class="blockdid">
@@ -53,120 +53,27 @@
 </template>
 
 <script>
-import { inject, reactive, onUpdated, ref,watch } from "vue";
-import { getMusicDetail } from "../api/index.js";
-import changecount from  '../tools/formatNum.js';
+import { inject, reactive } from "vue";
+import { useChangeMusic } from "../hooks/useChangeMusic"
+import { useMusicListDetail } from "../hooks/useMusicListDetail"
+import formatNum from  '../tools/formatNum.js';
 export default {
   props: ["msg"],
   setup() {
     const musicplay = inject("musicplay");
-    let moreList = reactive({
-      List: [],
+    let moreList = reactive({ List: [],
     });
-    let flag = ref(true);
-    function changeMusic(index) {
-      // musicplay.updata("index", index);
-      // musicplay.updata("id", musicplay.val.List.trackIds[index].id);
-      // musicplay.updata("uname", musicplay.val.List.tracks[index].name);
-      // musicplay.updata("imgurl", musicplay.val.List.tracks[index].al.picUrl);
-      musicplay.updata("index", index);
-      musicplay.updata("id", moreList.List[index].id);
-      musicplay.updata("uname", moreList.List[index].name);
-      musicplay.updata("imgurl", moreList.List[index].al.picUrl);
-    }
-    // onUpdated(async () => {
-    //   if (flag) {
-    //     //调用一次后禁用
-    //     flag = false;
-    //     // console.log('67',musicplay.val)
-    //     let mapLi = musicplay.val;
-    //     // console.log('68',mapLi.List.trackIds[musicplay.val.index].id)
-    //     for (let i = 0; i < mapLi.List.trackIds.length; i++) {
-    //       await getMusicDetail(mapLi.List.trackIds[i].id).then((res) => {
-    //         // console.log('rr',res.data)
-    //         moreList.List[i] = res.data.songs[0];
-    //       });
-    //     }
-    //     musicplay.updata("List",moreList.List)
-    //     // console.log("xx", musicplay.val.List);
-    //     console.log("xx", moreList.List);
-    //   }
-    // });
-
-
-
-    //     onUpdated( () => {
-    //       console.log('musicplay',musicplay.val)
-    //   if (flag) {
-    //     //调用一次后禁用
-    //     flag = false;
-    //     // console.log('67',musicplay.val)
-    //     let mapLi = musicplay.val;
-    //     // console.log('68',mapLi.List.trackIds[musicplay.val.index].id)
-    //     for (let i = 0; i < mapLi.List.trackIds.length; i++) {
-    //        getMusicDetail(mapLi.List.trackIds[i].id).then((res) => {
-    //         // console.log('rr',res.data)
-    //         moreList.List[i] = res.data.songs[0];
-    //       });
-    //     }
-    //     musicplay.updata("List",moreList.List)
-    //     // console.log("xx", musicplay.val.List);
-    //     console.log("xx", moreList.List);
-    //   }
-    // });
-
-
-    //    onUpdated( () => {
-    //       console.log('musicplay',musicplay.val)
-    //   if (flag) {
-    //     //调用一次后禁用
-    //     flag = false;
-    //     // console.log('67',musicplay.val)
-    //     let mapLi = musicplay.val;
-    //     // console.log('68',mapLi.List.trackIds[musicplay.val.index].id)
-    //     for (let i = 0; i < mapLi.List.trackIds.length; i++) {
-    //        getMusicDetail(mapLi.List.trackIds[i].id).then((res) => {
-    //         // console.log('rr',res.data)
-    //         moreList.List[i] = res.data.songs[0];
-    //       });
-    //     }
-    //     musicplay.updata("List",moreList.List)
-    //     // console.log("xx", musicplay.val.List);
-    //     console.log("xx", moreList.List);
-    //   }
-    // });
-
-    watch(
-      () => musicplay,
-      (v1, v2) => {
-        let mapLi = musicplay.val;
-        // console.log('68',mapLi.List.trackIds[musicplay.val.index].id)
-        for (let i = 0; i < mapLi.List.trackIds?.length; i++) {
-           getMusicDetail(mapLi.List.trackIds[i].id).then((res) => {
-            // console.log('rr',res.data)
-            moreList.List[i] = res.data.songs[0];
-          });
-        }
-        musicplay.updata("List",moreList.List)
-        // console.log("xx", musicplay.val.List);
-        // console.log("xx", moreList.List);
-      },
-      {
-        deep: true, // 深度监听的参数
-      }
-    );
-
-
+    useMusicListDetail(musicplay,moreList)
+    
 
     return {
-      changeMusic,
-      flag,
+      musicplay,
       moreList,
+      useChangeMusic,
+      useMusicListDetail,
+      formatNum,
     };
   },
-   methods:{
-    changecount
-  }
 };
 </script>
 
@@ -190,7 +97,7 @@ export default {
       .icon {
         width: 0.5rem;
         height: 0.5rem;
-        margin-right: 0.1rem;
+        margin-right: 0.2rem;
       }
       .tips {
         font-size: 0.3rem;

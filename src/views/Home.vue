@@ -5,6 +5,7 @@
     <iconList></iconList>
     <musiclist></musiclist>
     <router-view></router-view>
+    <featuredList></featuredList>
   </div>
 </template>
 
@@ -14,6 +15,7 @@ import tonav from "@/components/toNav.vue";
 import swiperCom from "@/components/swiperCom.vue";
 import iconList from '@/components/iconList.vue';
 import musiclist from '@/components/musiclist.vue';
+import featuredList from '@/components/featuredList'
 import {onMounted,inject} from 'vue'
 
   
@@ -23,7 +25,7 @@ import {onMounted,inject} from 'vue'
 export default {
   name: "Home",
   components: {
-    tonav,swiperCom,iconList,musiclist
+    tonav,swiperCom,iconList,musiclist,featuredList
   },
   setup() {
     

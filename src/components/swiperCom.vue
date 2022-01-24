@@ -30,15 +30,8 @@ import { getBanners } from '@/api/index.js';
 
 export default {
   data() {
-    return {
-      imgs: [
-        {
-          pic: ''
-        }
-      ],
-    };
+    return {imgs: [{pic: ''}],};
   },
-    //async 异步
    async mounted() {
     //配置swiper
     var mySwiper = new Swiper(".swiper-container", {
@@ -49,26 +42,17 @@ export default {
       pagination: {
         el: ".swiper-pagination",
       },
-
       // 如果需要前进后退按钮
       //   navigation: {
       //     nextEl: ".swiper-button-next",
       //     prevEl: ".swiper-button-prev",
       //   },
-
       // 如果需要滚动条
       // scrollbar: {
       //   el: '.swiper-scrollbar',
       // },
     });
 
-
-    //  axios.get('http://localhost:3000/banner?type=1').then((res)=>{
-    //     console.log(res)
-    //     this.imgs=res.data.banners
-    //     console.log(this.imgs)
-    // })
-    // let res=await axios.get('http://localhost:3000/banner?type=1')
     let res=await getBanners(1)
     this.imgs=[]
     this.imgs=res.data.banners

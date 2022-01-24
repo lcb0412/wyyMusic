@@ -1,5 +1,5 @@
 <template>
-  <playerControler  @isplaying='isplaying'></playerControler>
+  <playerControler ></playerControler>
   <router-view/>
 </template>
 
@@ -35,12 +35,6 @@ export default {
     }
   },
 
-  methods: {
-    isplaying(val){
-      // console.log(val)
-      this.musicplay.isplaying=val
-    }
-  },
 
 }
 </script>

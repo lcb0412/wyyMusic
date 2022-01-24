@@ -30,10 +30,10 @@ export default {
       // console.log(res)
       //加入一个then()
       // 通过传入箭头函数作为参数，即可在res变量接收到 [[PromiseResult]]的值
-      getPlayList(id).then((res) => {
+      await getPlayList(id).then((res) => {
         musicplay.updata('List',res.data.playlist)
         msg.detail=musicplay.val.List
-        // console.log('1',msg)
+        console.log('1',musicplay)
       });
     });
    return{

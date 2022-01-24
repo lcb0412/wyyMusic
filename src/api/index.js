@@ -47,3 +47,17 @@ export function getlyric(id){
 export function cloudsearch(keywords){
     return axios.get(`${baseUrl}/cloudsearch?keywords=${keywords}`)
 }
+
+
+//说明 : 调用此接口 , 可获取新歌速递
+//type 全部:0,华语:7,欧美:96,日本:8,韩国:16
+export function gettopsong(type=0){
+    return axios.get(`${baseUrl}/top/song?type=${type}`)
+}
+
+// 调用此接口,可获取歌单分类,包含 category 信息
+export function playlisthot(){
+    return axios.get(`${baseUrl}/toplist`)
+}
+
+

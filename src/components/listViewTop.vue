@@ -21,7 +21,7 @@
   <div class="listViewBody">
     <div class="viewbody_left">
       <img :src="msg.detail.coverImgUrl" />
-       <span> ▷ {{ changecount(msg.detail.playCount) }}</span>
+       <span> ▷ {{ formatNum(msg.detail.playCount) }}</span>
     </div>
     <div class="viewbody_right">
       <div class="bodyright_top">
@@ -45,7 +45,7 @@
         <use xlink:href="#icon-shoucang"></use>
       </svg>
       <div class="count">
-          收藏<div style="font-size:0.2rem;padding:0.1rem 0;">{{ msg.detail.commentCount }}</div>
+          评论<div style="font-size:0.2rem;padding:0.1rem 0;">{{ formatNum(msg.detail.commentCount) }}</div>
       </div>
     </div>
 
@@ -54,7 +54,7 @@
         <use xlink:href="#icon-zhuanfa"></use>
       </svg>
       <div class="count">
-         转发<div style="font-size:0.2rem;padding:0.1rem 0;">{{ msg.detail.shareCount }}</div>
+         转发<div style="font-size:0.2rem;padding:0.1rem 0;">{{ formatNum(msg.detail.shareCount) }}</div>
       </div>
     </div>
 
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import changecount from  '../tools/formatNum.js';
+import formatNum from  '../tools/formatNum.js';
 export default {
   props: ["msg"],
   mounted() {
@@ -89,7 +89,7 @@ export default {
     
   },
   methods:{
-    changecount
+    formatNum
   }
 };
 </script>

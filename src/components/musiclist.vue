@@ -17,7 +17,7 @@
         >
           <img :src="item.picUrl" :alt="item.name" />
           <div>{{ item.name }}</div>
-          <span> ▷ {{ changecount(item.playCount) }}</span>
+          <span> ▷ {{ formatNum(item.playCount) }}</span>
         </router-link>
       </div>
       <div class="swiper-pagination"></div>
@@ -30,14 +30,14 @@ import "swiper/css/swiper.css";
 import Swiper from "swiper";
 import { getPersonalized } from "@/api/index.js";
 import { reactive, onUpdated, onMounted } from "vue";
-import changecount from  '../tools/formatNum.js';
+import formatNum from  '../tools/formatNum.js';
 export default {
   setup() {
     let musicArr = reactive([{}]);
     onMounted(async () => {
-      let res = await getPersonalized(10);
+      let res =  await getPersonalized(30)
       musicArr.value = res.data.result;
-      console.log("res", musicArr.value);
+      console.log("res",res);
     });
     onUpdated(() => {
       var swiper = new Swiper(".mySwiper", {
@@ -46,13 +46,9 @@ export default {
       });
     });
     return {
-      musicArr,
-      
+      musicArr,formatNum
     };
   },
-  methods:{
-    changecount
-  }
 };
 </script>
 

@@ -1,4 +1,4 @@
-function changecount(num){
+export default function (num){
     let res=0
     if(num>=100000000){
       res=(num/100000000).toFixed(1)+'亿'
@@ -10,4 +10,3 @@ function changecount(num){
     return res
   }
  
-  export default changecount

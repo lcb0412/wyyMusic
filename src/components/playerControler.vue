@@ -1,6 +1,6 @@
 <template>
-  <div class="player" >
-    <div class="player_left" @click="mid.url?openMusicDet():''">
+  <div class="player">
+    <div class="player_left" @click="mid.url ? openMusicDet() : ''">
       <img
         :src="musicplay.val.imgurl"
         alt=""
@@ -14,14 +14,14 @@
         </div>
         <div class="detail_title" v-if="!musicplay.val.uname">未播放音乐</div>
         <div class="detail_tips">横滑可以切换上下首喔</div>
-        <audio id="wyyaudio" :src="mid.url" autoplay></audio>
+        <audio id="wyyaudio" :src="mid.url" autoplay ref="wyyaudio"></audio>
       </div>
     </div>
     <div class="player_right">
       <svg
         class="icon"
         aria-hidden="true"
-        @click="changeAduioPlay"
+        @click="useChangeAduioPlay(mid,musicplay)"
         v-if="!musicplay.val.isplaying"
       >
         <use xlink:href="#icon-bofang-copy"></use>
@@ -29,183 +29,78 @@
       <svg
         class="icon"
         aria-hidden="true"
-        @click="changeAduioPlay"
+        @click="useChangeAduioPlay(mid,musicplay)"
         v-if="musicplay.val.isplaying"
       >
         <use xlink:href="#icon-zanting"></use>
       </svg>
-      <svg class="icon" aria-hidden="true" @click="nextMusic">
+      <svg class="icon" aria-hidden="true" @click="userNextMusic(musicplay)">
         <use xlink:href="#icon-youfanye"></use>
       </svg>
     </div>
   </div>
-  <musicDetail :selectMusicDet="selectMusicDet"></musicDetail>
+  <musicDetail
+    :selectMusicDet="selectMusicDet"
+    :audioref="wyyaudio"
+  ></musicDetail>
 </template>
 
 
 <script>
 import { inject, reactive, onUpdated, onMounted, watch, ref } from "vue";
-import { getMusic } from "../api/index.js";
+import { userGetMusic } from "../hooks/userGetMusic";
+import { userNextMusic } from "../hooks/userNextMusic";
+import { autoNextMusic } from "../hooks/userNextMusic";
+import { useChangeAduioPlay } from "../hooks/useChangeAduioPlay";
+import { useWatchPLayStatus } from "../hooks/useWatchPLayStatus";
 import musicDetail from "./musicDetail.vue";
 export default {
   components: {
     musicDetail,
   },
-  emits: ["isplaying"],
-  setup(props, context) {
+  setup(props, {emit}) {
+    //引入全局变量musicplay
     const musicplay = inject("musicplay");
-    let mid = reactive({
-      url: "",
-    });
-    let selectMusicDet = reactive({
-      flag: false,
-      isplay: musicplay.isplaying,
-    });
-    let flag = ref(true);
-     function getMusicUrl() {
-      // console.log(musicplay.val.id);
-      getMusic(musicplay.val.id).then((res) => {
-        // console.log(res.data)
-        //部分情况下获取的音乐url为空
-        if(!res.data.data[0].url){
-          mid.url =  `https://music.163.com/song/media/outer/url?id=${musicplay.val.id}.mp3`
-        }
-        else{
-          mid.url = res.data.data[0].url;
-        }
-        console.log(mid.url)
-      });
-      console.log("第" + musicplay.val.index + "首");
-    }
-    function nextMusic() {
-      musicplay.updata("index", musicplay.val.index + 1);
-      if (musicplay.val.List[musicplay.val.index]) {
-        console.log("下一首", musicplay.val.List[musicplay.val.index].id);
-        musicplay.updata("id", musicplay.val.List[musicplay.val.index].id);
-        musicplay.updata("uname", musicplay.val.List[musicplay.val.index].name);
-        musicplay.updata(
-          "imgurl",
-          musicplay.val.List[musicplay.val.index].al.picUrl
-        );
-        //设置了自动播放-获取歌曲状态更改为播放
-        musicplay.isplaying = true;
-      } else {
-        console.log("歌单播放完毕");
-      }
-    }
-
-    function lastMusic() {    
-      if (musicplay.val.index > 0 ) {
-         musicplay.updata("index", musicplay.val.index - 1);
-        console.log("上一首", musicplay.val.List[musicplay.val.index].id);
-        musicplay.updata("id", musicplay.val.List[musicplay.val.index].id);
-        musicplay.updata("uname", musicplay.val.List[musicplay.val.index].name);
-        musicplay.updata(
-          "imgurl",
-          musicplay.val.List[musicplay.val.index].al.picUrl
-        );
-        //设置了自动播放-获取歌曲状态更改为播放
-        musicplay.isplaying = true;
-      } else {
-        console.log("当前歌单暂无上一首");
-      }
-    }
-
-    function getCurTime(){
-      // console.log(document.getElementById("wyyaudio").currentTime)
-      let restime = document.getElementById("wyyaudio").currentTime 
-      musicplay.curtime = restime
-      // console.log(musicplay.curtime)
-    }
-
-
-    onUpdated(() => {
-      if (flag) {
-        //设置了自动播放-获取歌曲状态更改为播放
-        musicplay.isplaying = true;
-        flag = false;
-      }
-      getMusicUrl();
-    });
-
-    onMounted(() => {
-      var audio = document.getElementById("wyyaudio");
-      //循环播放
-      //audio.loop = true;
-      //禁用循环播放
-      audio.loop = false;
-      //定义ended时调用的方法
-      var next = function () {
-        setTimeout(() => {
-          console.log("播放结束");
-          nextMusic();
-        }, 1000);
-      };
-      //为播放器添加一个ended事件，即播放结束时调用next
-      audio.addEventListener("ended", next, false);
-    });
-
-    // 监听播放器中音乐地址的变化，即更换音乐时，监听播放状态同时更改播放按钮状态
-    watch(mid, (newVal, oldVal) => {
-      context.emit("isplaying", musicplay.isplaying);
-    });
-    //监听播放状态，播放/暂停音乐
-    watch(
-      () => musicplay,
-      (v1, v2) => {
-        // console.log("controler播放状态改变为", v1.val.isplaying);
-        if (v1.val.isplaying) {
-          document.getElementById("wyyaudio").play();
-        } else {
-          document.getElementById("wyyaudio").pause();
-        }  
-        context.emit("isplaying", v1.val.isplaying);
-      },
-      {
-        deep: true, // 深度监听的参数
-      }
-    );
+    
+    //获取Dmo节点-播放器audio
+    const wyyaudio = ref(null);
+    
+    //音乐url
+    let mid = reactive({url: "",});
+    
+    ////获取音乐url,切换播放状态
+    userGetMusic(mid,musicplay)
+    
+    //是否点击进入音乐详情页
+    let selectMusicDet = reactive({flag: false,isplay: musicplay.isplaying,});
+    
+    //点击播放按钮时变更状态
+    // useChangeAduioPlay(mid,musicplay)
+    
+    //自动播放下一曲
+    autoNextMusic(wyyaudio,musicplay)
+    
+    //监听播放
+    useWatchPLayStatus(mid,musicplay,wyyaudio)
+    
 
     return {
       musicplay,
       mid,
       selectMusicDet,
-      flag,
-      getMusicUrl,
-      nextMusic,
-      lastMusic,
-      getCurTime,
+      wyyaudio,
+      userGetMusic,
+      userNextMusic,
+      autoNextMusic,
+      useChangeAduioPlay,
+      useWatchPLayStatus,
+
     };
   },
 
   methods: {
-    changeAduioPlay() {
-      if (this.mid.url) {
-        if (this.musicplay.val.isplaying) {
-          this.musicplay.val.isplaying = false;
-          this.$emit("isplaying", this.musicplay.val.isplaying);
-        } else {
-          this.musicplay.val.isplaying = true;
-          this.$emit("isplaying", this.musicplay.val.isplaying);
-        }
-      } else {
-        alert("请选择音乐播放");
-      }
-    },
     openMusicDet() {
       this.selectMusicDet.flag = true;
-      if( this.selectMusicDet.flag){
-        if(document.getElementById("tolistdetail")){
-          document.getElementById("tolistdetail").style.height=0;
-          document.getElementById("tolistdetail").style.overflow='hidden';
-        } 
-        if(document.getElementById("plist")){
-          document.getElementById("plist").style.height=0;
-          document.getElementById("plist").style.overflow='hidden';
-        }
-         
-      }
-      
     },
   },
 };

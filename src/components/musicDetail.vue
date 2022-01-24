@@ -40,7 +40,7 @@
           <use xlink:href="#icon-xunhuanbofang-wangyiicon"></use>
         </svg>
       </div>
-      <div class="playlast" @click="playLast">
+      <div class="playlast" @click="useLastMuisc(musicplay)">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-shangyiqu-wangyiicon"></use>
         </svg>
@@ -63,7 +63,7 @@
           <use xlink:href="#icon-bofang-wangyiicon"></use>
         </svg>
       </div>
-      <div class="playnext" @click="playNext">
+      <div class="playnext" @click="userNextMusic(musicplay)">
         <svg class="icon" aria-hidden="true">
           <use xlink:href="#icon-xiayiqu-wangyiicon"></use>
         </svg>
@@ -78,85 +78,54 @@
 </template>
 
 <script >
-import { inject, onUpdated, reactive, onMounted, watch } from "vue";
-import { getlyric } from "../api/index.js";
+import { inject, onUpdated, reactive, onMounted, watch,toRaw } from "vue";
+import {userNextMusic} from "../hooks/userNextMusic"
+import {useLastMuisc} from "../hooks/useLastMuisc"
+import {useGetCurTime} from "../hooks/useGetCurTime"
+import {useFormatLrc} from "../hooks/useFormatLrc"
+
 export default {
-  setup() {
-    const musicplay = inject("musicplay");
-    const lrc = reactive({
-      val: "",
-      timeList: [],
-    });
-    watch(
-      () => musicplay.val.id,
-      (v1, v2) => {
-        getlyric(v1).then((res) => {
-          // console.log(res.data);
-          lrc.val = res.data.lrc.lyric;
-          var newlrc = lrc.val.split(/[(\r\n)\r\n]+/);
-          //歌词内容歌词时间进行清零
-          lrc.val = [];
-          lrc.timeList = [];
-          for (var i = 0; i < newlrc.length; i++) {
-            let map = newlrc[i].split(/\[|\]/);
-            //数组中包含时间，即正确格式的数组才进行赋值
-            if (map[1]) {
-              lrc.val.push(map);
-            }
-            //在歌词时间数组长度内
-            if (map[1]) {
-              //获取分钟数
-              let m = Number(map[1].split(":")[0]) * 60;
-              // 获取一个秒数s+毫秒数ms的数组
-              let s = map[1].split(":")[1].split(".");
-              //获取秒数
-              let ms = Number(s[0]) + Number(s[1]) / 1000;
-              let time = m + ms;
-              lrc.timeList.push(time);
-            }
-          }
-          // console.log(lrc.timeList);
-          // console.log("lrc", lrc.val);
-        });
+  props:{
+      audioref:{
+        type:String
       },
-      {
-        deep: true, // 深度监听的参数
+      selectMusicDet:{
+        type:Object
       }
-    );
+  },
+  setup(props) { 
+    const musicplay = inject("musicplay");
+    const lrc = reactive({val: "", timeList: [], });
+    useFormatLrc(musicplay,lrc)
     return {
-      musicplay,
-      lrc,
+      musicplay,lrc,
+      //获取歌词并格式化
+      useFormatLrc,    
+      //下一曲
+      userNextMusic,
+      //上一曲,
+      useLastMuisc
     };
   },
-  props: ["selectMusicDet"],
+
+
+  
+  props: ["selectMusicDet","audioref"],
   methods: {
     returnList() {
       this.selectMusicDet.flag = false;
-      if(!this.selectMusicDet.flag){
-        if(document.getElementById("tolistdetail")){
-          document.getElementById("tolistdetail").style.height='100%';
-        }
-        if(document.getElementById("plist")){
-          document.getElementById("plist").style.height='100%';
-        }
-      }
     },
     clickMusic() {
       this.musicplay.val.isplaying = !this.musicplay.val.isplaying;
       // this.musicplay.updata('isplaying',!this.musicplay.val.isplaying)
       console.log("播放状态改变为", this.musicplay.val.isplaying);
     },
-    playNext() {
-      this.$parent.nextMusic();
-    },
-    playLast() {
-      this.$parent.lastMusic();
-    },
+
   },
 
   mounted() {
     setInterval(() => {
-      this.$parent.getCurTime();
+      useGetCurTime(this.audioref,this.musicplay);
       // console.log(this.musicplay.curtime)
       for (var i = 0; i < this.lrc.timeList.length; i++) {
         //歌词大于等于5
@@ -220,12 +189,6 @@ export default {
       }
     }, 100);
   },
-  computed: {
-    windowHei() {
-      // console.log('hei',document.documentElement.clientHeight || window.innerHeight)
-      return document.documentElement.clientHeight || window.innerHeight;
-    },
-  },
 };
 </script>
 
@@ -233,11 +196,13 @@ export default {
 .musicDet {
   width: 7.5rem;
   margin: 0 auto;
-  height: 150%;
-  position: absolute;
+  height: 100%;
+  position: fixed;
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
+  overflow: scroll;
   z-index: 999;
   transition: all 0.2s;
 }
@@ -245,11 +210,11 @@ export default {
 .bg {
   width: 7.5rem;
   height: 100%;
-  position: relative;
+  position: fixed;
   overflow: hidden;
   img {
     height: 100%;
-    height: 100%;
+    width: 100%;
     filter: blur(0.2rem);
     transform: scale(1.1);
   }
@@ -296,11 +261,12 @@ export default {
   transform: rotate(-25deg);
 }
 .black {
-  width: 100%;
+  width: 7.5rem;
   height: 100%;
   background: rgba(0, 0, 0, 0.2);
-  position: absolute;
+  position: fixed;
   top: 0;
+  bottom: 0;
 }
 .center {
   width: 6rem;
@@ -362,13 +328,12 @@ export default {
   position: absolute;
   top: 8rem;
   color: white;
-  height: 3.5rem;
+  height: 5.5rem;
   overflow: hidden;
   text-align: center;
   line-height: 0.6rem;
   overflow-y: scroll;
   width: 7.5rem;
-  overflow: hidden;
 }
 
 #picblock3 {
